@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Просмотр изображения</title>
+  <link rel="icon" href="/static/logo48.png" type="image/png" />
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="navbar-container"></div>
+<script src="/js/navbar.js" defer></script>
+
+
+  
+  <div id="image-container"></div>
+
+  <script>
+    async function loadImageDetails() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+
+      if (!id) return;
+
+      const res = await fetch(`http://localhost:8000/images/${id}`);
+      const data = await res.json();
+	console.log(data);
+      const container = document.getElementById("image-container");
+      container.innerHTML = `
+        <h2>${data.title}</h2>
+        <img src="http://localhost:8000/uploads/${data.filename}" style="max-width: 100%; height: auto;" />
+       <p> Автор:  <a href="/otherprofile.html?user_id=${data.owner_id}">${data.owner.username}</a></p>
+        <p>ID изображения: ${data.id}</p>
+      `;
+	   if (data.owner.background && data.owner.background!="defaultback") {
+                    document.body.style.backgroundImage = `url(http://localhost:8000/uploads/${data.owner.background})`;
+       }
+    }
+
+    loadImageDetails();
+  </script>
+</body>
+</html>

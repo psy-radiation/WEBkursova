@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Профиль пользователя</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="/static/logo48.png" type="image/png">
+</head>
+<body>
+    <div id="navbar-container"></div>
+    <script src="/js/navbar.js" defer></script>
+	
+<div class="profile-page">
+    <div class="profile-header">
+      <img id="profileAvatar" class="profile-avatar"  src="http://localhost:8000/uploads/defaultav.png" alt="Avatar">
+      <h2 id="username">Username</h2>
+      <p id="idtext">ID: <span id="user-id">0</span></p>
+    </div>
+			<div class="profile-content">
+            <h1 id="username"></h1>
+            <div id="gallery"></div>
+        </div>
+
+<script src="js/api.js"></script>
+<script>
+        // Загрузка данных профиля
+        async function loadUserProfile() {
+			console.log("started");
+            try {
+                const userId = new URLSearchParams(window.location.search).get('user_id') || 'me';
+				console.log(userId);
+                const endpoint = userId === 'me' ? '/users/me' : `/users/${userId}`;
+				console.log(endpoint);
+                const user = await apiGet(endpoint);
+                console.log(user);
+                document.getElementById('username').textContent = user.username;
+                
+                if (user.avatar) {
+                    document.getElementById('profileAvatar').src = `http://localhost:8000/uploads/${user.avatar}`;
+                }
+                
+                if (user.background && user.background!="defaultback") {
+                    document.body.style.backgroundImage = `url(http://localhost:8000/uploads/${user.background})`;
+                }
+               document.getElementById('user-id').textContent = userId;
+
+                loadUserImages(user.id);
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+        
+        // Загрузка изображений пользователя
+        async function loadUserImages(userId) {
+            try {
+			console.log(userId);
+                const images = await apiGet(`/images/latestfr/${userId}`);
+                const gallery = document.getElementById('gallery');
+                gallery.innerHTML = ""; // Очищаем при каждом вызове
+
+				images.forEach(img => {
+						const div = document.createElement("div");
+							div.className = "image-card";
+							div.innerHTML = `
+							<a href="/image.html?id=${img.id}" style="text-decoration: none; color: inherit;">
+							<img src="http://localhost:8000/uploads/${img.filename}" alt="${img.title}" />
+							<h4>${img.title}</h4>
+							<p>${img.owner?.username || 'Неизвестно'}</p>
+        `;
+        gallery.appendChild(div);
+      });
+            } catch (error) {
+                console.error('Error loading images:', error);
+            }
+        }
+        
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            // Назначение обработчиков после загрузки DOM
+            console.log(apiGet);
+            loadUserProfile();
+        });
+    </script>
+</body>
+</html>

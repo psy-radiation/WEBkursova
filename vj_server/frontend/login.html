@@ -1,0 +1,30 @@
+
+<meta charset="utf-8">
+<link rel="stylesheet" href="css/style.css">
+<div id="navbar-container"></div>
+<script src="/js/navbar.js" defer></script>
+<link rel="icon" href="/static/logo48.png" type="image/png" />
+
+
+<form id="loginForm">
+  <input type="text" id="username" placeholder="Username" required />
+  <input type="password" id="password" placeholder="Password" required />
+  <button type="submit">Login</button>
+</form>
+
+<script src="js/api.js"></script>
+<script>
+  document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const data = await login(username, password);
+    if (data.access_token) {
+      localStorage.setItem("token", data.access_token);
+	  location.href = "/index.html"; // или reload
+    } else {
+      alert("Login failed");
+    }
+  });
+
+</script>
