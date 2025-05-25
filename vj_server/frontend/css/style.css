@@ -7,6 +7,7 @@ body {
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-position: center center;
+  backdrop-filter: blur(3px);
 }
 
 
@@ -163,4 +164,20 @@ form h2 {
         height: 200px;
         margin-bottom: 50px;
     }
+}
+
+#preview-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  text-align: center;
+}
+
+#preview-container img {
+  max-width: 300px;
+  max-height: 200px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
